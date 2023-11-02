@@ -2,7 +2,7 @@
 
 ## INSTALLs
 
-- brew install postgresql(@14) dbmate
+- brew install postgresql(@14) dbmate cornucopia
 
 ## IMPORTANT STEPs
 
