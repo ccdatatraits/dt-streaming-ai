@@ -10,3 +10,7 @@
 - export DATABASE_URL=postgresql://sohail@localhost:5432/db_assistantai?sslmode=disable
 - alias cw='mold -run cargo watch --no-gitignore -i "*.scss" -i "*.ts" -i node_modules -x run'
 (Mac: alias cw='cargo watch --no-gitignore -i "*.scss" -i "*.ts" -i node_modules -x run')
+
+## NPM RUN (asset-pipeline)
+
+- npm install && npm run start
