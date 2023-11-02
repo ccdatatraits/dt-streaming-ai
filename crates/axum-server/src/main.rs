@@ -2,8 +2,7 @@ mod config;
 mod errors;
 
 use crate::errors::CustomError;
-use axum::{extract::Extension, response::Json, routing::get, Router};
-use db::User;
+use axum::{extract::Extension, response::Html, routing::get, Router};
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -27,10 +26,11 @@ async fn main() {
         .unwrap();
 }
 
-async fn users(Extension(pool): Extension<db::Pool>) -> Result<Json<Vec<User>>, CustomError> {
+async fn users(Extension(pool): Extension<db::Pool>) -> Result<Html<String>, CustomError> {
     let client = pool.get().await?;
 
     let users = db::queries::users::get_users().bind(&client).all().await?;
 
-    Ok(Json(users))
+    // We now return HTML
+    Ok(Html(ui_components::users::users(users)))
 }
