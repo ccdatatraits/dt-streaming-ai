@@ -14,7 +14,6 @@ fn cornucopia() {
     let file_path = Path::new(&out_dir).join("cornucopia.rs");
 
     let db_url = env::var_os("DATABASE_URL").unwrap();
-    // println!("SMK: {out_dir:?} -> {db_url:?}");
 
     // Rerun this build script if the queries or migrations change.
     println!("cargo:rerun-if-changed={queries_path}");

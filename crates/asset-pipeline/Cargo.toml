@@ -6,3 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+mime = "0.3.0"
+
+[build-dependencies]
+ructe = { version = "0.15.0", features = ["mime03"] }
