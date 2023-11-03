@@ -8,9 +8,12 @@ edition = "2021"
 [dependencies]
 asset-pipeline = { path = "../asset-pipeline" }
 db = { path = "../db" }
+grpc-api = { path = "../grpc-api" }
 ui-components = { path = "../ui-components" }
 
 axum = "0.6.20"
+http = "0.2"
 serde = { version = "1.0", features = ["derive"] }
 tokio = { version = "1.33.0", default-features = false, features = ["macros", "fs", "rt-multi-thread"] }
+tower = { version = "0.4", features = ["steer"] }
 validator = { version = "0.15", features = ["derive"] }
