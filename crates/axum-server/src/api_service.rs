@@ -1,10 +1,10 @@
 use crate::errors::CustomError;
-// use db::queries::users;
 use db::queries::users::get_users;
 use db::Pool;
-use grpc_api::api::*;
+use grpc_api::api::{tonic::transport::NamedService, *};
 use tonic::{Request, Response, Status};
 
+#[derive(Clone)]
 pub struct UsersService {
     pub pool: Pool,
 }
@@ -30,10 +30,6 @@ impl grpc_api::api::users_server::Users for UsersService {
             .await
             .map_err(|e| CustomError::Database(e.to_string()))
             .unwrap();
-        // let users = crate::users(&client)
-        //     .await
-        //     .map_err(|e| CustomError::Database(e.to_string()))
-        //     .unwrap();
 
         // Map the structs we get from cornucopia to the structs
         // we need for our gRPC reply.
@@ -50,17 +46,7 @@ impl grpc_api::api::users_server::Users for UsersService {
         return Ok(Response::new(users));
     }
 }
-// async fn load_users() {
-//     let db_url = std::env::var("DATABASE_URL").unwrap();
-//     let pool = create_pool(&db_url);
 
-//     let client = pool.get().await.unwrap();
-
-//     let users = crate::queries::users::get_users()
-//         .bind(&client)
-//         .all()
-//         .await
-//         .unwrap();
-
-//     dbg!(users);
-// }
+impl NamedService for UsersService {
+    const NAME: &'static str = "Users Service";
+}

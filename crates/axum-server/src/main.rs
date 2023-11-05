@@ -3,11 +3,9 @@ mod config;
 mod errors;
 
 use crate::errors::CustomError;
-use axum::{body::Body, extract::Extension, response::Json, routing::get, Router};
+use axum::{body::Body, extract::Extension, response::Json, routing::get, BoxError, Router};
 use db::User;
-// use grpc_api::api::api_server::UsersServer;
-// use grpc_api::api::tonic;
-// use grpc_api::api::tonic::transport::Server;
+use grpc_api::api::{tonic::transport::Server, users_server::UsersServer};
 use http::{header::CONTENT_TYPE, Request};
 use std::net::SocketAddr;
 use tower::{make::Shared, steer::Steer, ServiceExt};
@@ -23,19 +21,18 @@ async fn main() {
         .route("/", get(users))
         .layer(Extension(config))
         .layer(Extension(pool.clone()))
+        .map_err(BoxError::from)
         .boxed_clone();
 
     // Handle gRPC API requests
-    // let grpc = Server::builder()
-    //     .add_service(TraceServer::new(api::trace_grpc_service::TraceService {
-    //         pool,
-    //     }))
-    //     .into_service()
-    //     .map_response(|r| r.map(axum::body::boxed))
-    //     .boxed_clone();
+    let grpc = Server::builder()
+        .add_service(UsersServer::new(api_service::UsersService { pool }))
+        .into_service()
+        .map_response(|r| r.map(axum::body::boxed))
+        .boxed_clone();
 
     // Create a service that can respond to Web and gRPC
-    let http_grpc = Steer::new(vec![app /*, grpc*/], |req: &Request<Body>, _svcs: &[_]| {
+    let http_grpc = Steer::new(vec![app, grpc], |req: &Request<Body>, _svcs: &[_]| {
         if req.headers().get(CONTENT_TYPE).map(|v| v.as_bytes()) != Some(b"application/grpc") {
             0
         } else {
